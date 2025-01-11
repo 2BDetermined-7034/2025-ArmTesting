@@ -18,7 +18,7 @@ public final class Constants {
 	}
 	public static class ArmConstants {
 		public static final int CANCODER_PORT = 12;
-		public static final int SPARK_MAX_PORT = 24;
+		public static final int MOTOR_PORT = 24;
 
 		public static final double WEIGHT_NEWTONS = 0;
 		public static final double KINETIC_FRICTION_NEWTONS = 0;

@@ -22,7 +22,7 @@ public class ArmSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		double voltage;
-		voltage = WEIGHT_NEWTONS * Math.cos()
-		sparkMax.setVoltage(voltage);
+//		voltage = WEIGHT_NEWTONS * Math.cos()
+//		sparkMax.setVoltage(voltage);
 	}
 }
