@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -14,6 +15,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,8 +30,8 @@ public class ArmSysID extends SubsystemBase {
 	Voltage voltage;
 
 	public ArmSysID() {
-		canCoder = new CANcoder(CANCODER_PORT);
-		motor = new TalonFX(MOTOR_PORT);
+		canCoder = new CANcoder(CANCODER_PORT, "drivebase");
+		motor = new TalonFX(MOTOR_PORT, "drivebase");
 
 		CANcoderConfiguration ccConfig = new CANcoderConfiguration();
 		ccConfig.MagnetSensor.MagnetOffset = 0.0;

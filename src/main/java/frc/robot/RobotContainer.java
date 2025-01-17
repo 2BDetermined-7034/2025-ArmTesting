@@ -11,12 +11,14 @@ import frc.robot.Constants.OperatorConstants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.ArmCommand;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ArmSysID;
 
 public class RobotContainer {
 	// Replace with CommandPS4Controller or CommandJoystick if needed
 	private final CommandPS4Controller driverController = new CommandPS4Controller(OperatorConstants.DRIVER_CONTROLLER_PORT);
-	private ArmSysID armSysID = new ArmSysID();
+	private ArmCommand armCommand = new ArmCommand();
 
 	public RobotContainer() {
 		// Configure the trigger bindings
@@ -24,8 +26,9 @@ public class RobotContainer {
 	}
 
 	private void configureBindings() {
-		driverController.square().whileTrue(armSysID.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-		driverController.circle().whileTrue(armSysID.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+//		driverController.square().whileTrue(armSysID.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+//		driverController.circle().whileTrue(armSysID.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+		driverController.cross().whileTrue(armCommand);
 	}
 
 	public Command getAutonomousCommand() {
