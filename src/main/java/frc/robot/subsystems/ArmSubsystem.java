@@ -35,7 +35,7 @@ public class ArmSubsystem extends SubsystemBase {
 		SmartDashboard.putString("CANivore status", status.toString());
 
 		CANcoderConfiguration ccConfig = new CANcoderConfiguration();
-		ccConfig.MagnetSensor.MagnetOffset = 0.0;
+		ccConfig.MagnetSensor.MagnetOffset = 0.237539;
 		ccConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
 		canCoder.getConfigurator().apply(ccConfig);
 
@@ -52,6 +52,7 @@ public class ArmSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		SmartDashboard.putNumber("CANCoder angle", canCoder.getAbsolutePosition().getValueAsDouble() * 360);
+		SmartDashboard.putNumber("Angle setpoint", Math.toDegrees(ARM_SETPOINT));
 	}
 
 	public double getAngle() {

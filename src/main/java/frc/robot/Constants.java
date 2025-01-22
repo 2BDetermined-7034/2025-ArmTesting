@@ -31,5 +31,11 @@ public final class Constants {
 		public static final double AMPS_PER_NEWTON_METER = 400.006 / 7.27;
 
 		public static final double GEAR_RATIO = 80.0;
+
+		public static final double kP = 450/AMPS_PER_NEWTON_METER;
+		public static final double kI = 500/AMPS_PER_NEWTON_METER;
+		public static final double kD = 0.15/AMPS_PER_NEWTON_METER;
+
+		public static final double ARM_SETPOINT = Math.PI/4.0;
 	}
 }
