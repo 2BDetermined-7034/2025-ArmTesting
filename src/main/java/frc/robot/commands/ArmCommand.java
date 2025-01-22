@@ -17,10 +17,11 @@ public class ArmCommand extends Command {
 
 	@Override
 	public void execute() {
-		final double torque = MASS * G_ACCELERATION * DISTANCE_TO_COM * Math.cos(arm.getAngle());
+		final double torque = MASS * G_ACCELERATION * DISTANCE_TO_COM * Math.cos(arm.getAngle())
+				+ armPID.calculate(arm.getAngle());
 		final double amps = torque * AMPS_PER_NEWTON_METER;
         armPID.setSetpoint(ARM_SETPOINT);
-		arm.run(armPID.calculate(arm.getAngle())+amps);
+		arm.run(amps);
 	}
 
 
