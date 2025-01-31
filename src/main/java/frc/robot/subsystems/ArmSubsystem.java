@@ -24,7 +24,9 @@ public class ArmSubsystem extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-
+		SmartDashboard.putNumber("Arm Angle Degrees", getAngle() * (180/Math.PI));
+		SmartDashboard.putNumber("Arm Angle Radians", getAngle());
+		SmartDashboard.putNumber("Arm Angle Rotations", getAngle() / (2 * Math.PI) );
 	}
 
 	/**

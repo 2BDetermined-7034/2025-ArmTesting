@@ -14,13 +14,14 @@ import frc.robot.Constants.OperatorConstants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ArmCommand;
+import frc.robot.subsystems.ArmSubsystem;
 
 import java.io.File;
 
 public class RobotContainer {
 	// Replace with CommandPS4Controller or CommandJoystick if needed
 	private final CommandPS4Controller driverController = new CommandPS4Controller(OperatorConstants.DRIVER_CONTROLLER_PORT);
-	private ArmCommand armCommand = new ArmCommand();
+	private final ArmSubsystem arm = new ArmSubsystem();
 
 	public RobotContainer() {
 		// Configure the trigger bindings
@@ -47,8 +48,9 @@ public class RobotContainer {
 	private void configureBindings() {
 //		driverController.square().whileTrue(armSysID.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
 //		driverController.circle().whileTrue(armSysID.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-		driverController.cross().whileTrue(armCommand);
-		new Trigger(DriverStation::isEnabled).onTrue(Commands.runOnce(this::playIntro));
+		driverController.cross().whileTrue(new ArmCommand(arm, 0));
+		driverController.circle().whileTrue(new ArmCommand(arm, Constants.ArmConstants.ARM_HOME_SETPOINT_RADIANS));
+//		new Trigger(DriverStation::isEnabled).onTrue(Commands.runOnce(this::playIntro));
 	}
 
 	public Command getAutonomousCommand() {

@@ -32,7 +32,7 @@ public final class Constants {
 		public static final double kI = 0/AMPS_PER_NEWTON_METER;
 		public static final double kD = 0/AMPS_PER_NEWTON_METER;
 
-		public static final double ARM_HOME_SETPOINT_ROT = (-42d / 360d); //rot
-		public static final double ARM_HOME_SETPOINT_RADIANS = ARM_HOME_SETPOINT_ROT * 2 * Math.PI;
+		public static final double ARM_HOME_SETPOINT_ROT = (-42d / 360d) * GEAR_RATIO; //rot
+		public static final double ARM_HOME_SETPOINT_RADIANS = ARM_HOME_SETPOINT_ROT * (2 * Math.PI) / GEAR_RATIO;
 	}
 }
