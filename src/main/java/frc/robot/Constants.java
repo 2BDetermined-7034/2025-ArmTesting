@@ -16,6 +16,9 @@ public final class Constants {
 	public static class OperatorConstants {
 		public static final int DRIVER_CONTROLLER_PORT = 0;
 	}
+	public static class Misc {
+		public static final String canBus = "rio";
+	}
 	public static class ArmConstants {
 		public static final int MOTOR_PORT = 12;
 

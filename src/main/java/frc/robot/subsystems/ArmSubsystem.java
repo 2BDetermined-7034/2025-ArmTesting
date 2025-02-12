@@ -6,6 +6,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 import static frc.robot.Constants.ArmConstants.*;
 
@@ -17,7 +18,7 @@ public class ArmSubsystem extends SubsystemBase {
 	public double volts;
 
 	public ArmSubsystem() {
-		motor = new TalonFX(MOTOR_PORT, "drivebase");
+		motor = new TalonFX(MOTOR_PORT, Constants.Misc.canBus);
 		motor.setPosition(MOTOR_HOME_POSITION);
 
 		control = new TorqueCurrentFOC(0);

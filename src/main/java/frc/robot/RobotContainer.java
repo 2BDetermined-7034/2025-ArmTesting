@@ -5,10 +5,12 @@
 package frc.robot;
 
 import com.ctre.phoenix6.Orchestra;
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.OperatorConstants;
@@ -23,9 +25,8 @@ import java.io.File;
 public class RobotContainer {
 	// Replace with CommandPS4Controller or CommandJoystick if needed
 	private final CommandPS4Controller driverController = new CommandPS4Controller(OperatorConstants.DRIVER_CONTROLLER_PORT);
-//	private ArmSubsystem armSubsystem = new ArmSubsystem();
-//	private ArmCommand armCommand = new ArmCommand(armSubsystem);
-	private ArmSysID armSysID = new ArmSysID(12);
+	private final ArmSubsystem arm = new ArmSubsystem();
+	private final ArmSysID armSysID = new ArmSysID(12);
 
 	public RobotContainer() {
 		// Configure the trigger bindings
@@ -38,7 +39,7 @@ public class RobotContainer {
 
 		TalonFX[] motors = new TalonFX[8];
 		for (int i = 0; i < 8; ++i) {
-			motors[i] = new TalonFX(i, "drivebase");
+			motors[i] = new TalonFX(i, Constants.Misc.canBus);
 			orchestra.addInstrument(motors[i], i & 1);
 		}
 
@@ -52,10 +53,15 @@ public class RobotContainer {
 	private void configureBindings() {
 		driverController.povUp().and(driverController.circle()).whileTrue(armSysID.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
 		driverController.povDown().and(driverController.circle()).whileTrue(armSysID.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-		driverController.povUp().and(driverController.square()).whileTrue(armSysID.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-		driverController.povDown().and(driverController.square()).whileTrue(armSysID.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+		driverController.povUp().and(driverController.square()).whileTrue(armSysID.sysIdDynamic(SysIdRoutine.Direction.kForward));
+		driverController.povDown().and(driverController.square()).whileTrue(armSysID.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-		new Trigger(DriverStation::isEnabled).onTrue(Commands.runOnce(this::playIntro));
+		new Trigger(() -> !DriverStation.isEnabled()).onTrue(new InstantCommand(SignalLogger::stop));
+
+		new Trigger(DriverStation::isEnabled).onTrue(new InstantCommand(() -> {
+			SignalLogger.setPath("/home/lvuser/logs/");
+			SignalLogger.start();
+		}));
 	}
 
 	public Command getAutonomousCommand() {
