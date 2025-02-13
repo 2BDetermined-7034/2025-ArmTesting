@@ -43,4 +43,17 @@ public final class Constants {
 		public static final double MOTOR_HOME_POSITION = (-48d / 360d) * GEAR_RATIO; //rot
 		public static final double ARM_HOME_SETPOINT_RADIANS = MOTOR_HOME_POSITION * (2 * Math.PI) / GEAR_RATIO;
 	}
+	public static class ElevatorConstants {
+		public static final int MOTOR_PORT = 0;
+
+		public static final double MASS = 2.4494; // kg
+		public static final double G_ACCELERATION = 9.8067; // ms^-2
+
+		public static final double AMPS_PER_NEWTON_METER = 476.10 / 9.36;
+
+		public static final double GEAR_RATIO = 20.0 * (48.0 / 24.0);
+		public static final double SPOOL_RADIUS = 0.46355 / (90.89096944956364 - 6.703956237296618);
+
+		public static final double MOTOR_HOME_POSITION = (-48d / 360d) * GEAR_RATIO; //rot
+	}
 }
