@@ -1,12 +1,12 @@
 package frc.robot.commands;
 
 import com.ctre.phoenix6.SignalLogger;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.VoltageConfigs;
+import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.units.AngularVelocityUnit;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.util.datalog.DataLogWriter;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
@@ -21,6 +21,7 @@ import frc.robot.subsystems.ArmSubsystem;
 import static edu.wpi.first.units.Units.*;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Velocity;
+import org.ejml.ops.DConvertMatrixStruct;
 import sun.misc.Signal;
 
 public class ArmSysID extends SubsystemBase {
@@ -31,14 +32,11 @@ public class ArmSysID extends SubsystemBase {
 
 	public ArmSysID(int id) {
 		motor = new TalonFX(id, Constants.Misc.canBus);
-
-		final FeedbackConfigs feedbackConfigs = new FeedbackConfigs();
-
-		motor.getConfigurator().apply(feedbackConfigs);
+		final Angle offset = Rotations.of(0.783203);
 
 		voltageControl = new VoltageOut(0);
 
-		var rampRate = Volts.of(1.0).div(Seconds.of(10));
+		var rampRate = Volts.of(1.0).div(Seconds.of(5));
 		routine = new SysIdRoutine(
 			new SysIdRoutine.Config(
 				rampRate,
@@ -49,17 +47,17 @@ public class ArmSysID extends SubsystemBase {
 			new SysIdRoutine.Mechanism(
 				(volts) -> motor.setControl(voltageControl.withOutput(volts.in(Volts))),
 				(log) -> {
-					if (direction == SysIdRoutine.Direction.kReverse) {
-						log.motor("arm")
-							.voltage(Volts.of(0.01))
-							.angularPosition(Radians.of(0.01))
-							.angularVelocity(RadiansPerSecond.of(0.01));
-					} else {
+//					if (direction == SysIdRoutine.Direction.kReverse) {
+//						log.motor("arm")
+//							.voltage(Volts.of(-0.01))
+//							.angularPosition(Radians.of(-0.01))
+//							.angularVelocity(RadiansPerSecond.of(-0.01));
+//					} else {
 						log.motor("arm")
 							.voltage(motor.getMotorVoltage().getValue())
-							.angularPosition(motor.getPosition().getValue().div(GEAR_RATIO))
-							.angularVelocity(motor.getVelocity().getValue().div(GEAR_RATIO));
-					}
+							.angularPosition(motor.getPosition().getValue().plus(offset).div(GEAR_RATIO))
+							.angularVelocity(motor.getVelocity().getValue());
+//					}
 				},
 				this
 			)
