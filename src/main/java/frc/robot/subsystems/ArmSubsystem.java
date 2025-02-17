@@ -1,65 +1,96 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.units.Units;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
+import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.ArmConstants.*;
 
 public class ArmSubsystem extends SubsystemBase {
-	private TalonFX motor;
-	private TorqueCurrentFOC control;
-	private double setpoint = ARM_HOME_SETPOINT_RADIANS; // rad
+	private final TalonFX armMotor, intakeMotor;
+	private final CANcoder armEncoder;
 
-	public double volts;
+	/**
+	 * <a href=https://www.chiefdelphi.com/t/using-sysid-with-torquefoc/454175></a>
+	 */
 
 	public ArmSubsystem() {
-		motor = new TalonFX(MOTOR_PORT, Constants.Misc.canBus);
-		motor.setPosition(MOTOR_HOME_POSITION);
+		this.armMotor = new TalonFX(ARM_MOTOR_ID);
+		this.intakeMotor = new TalonFX(INTAKE_MOTOR_ID);
+		this.armEncoder = new CANcoder(CANCODER_ID);
 
-		control = new TorqueCurrentFOC(0);
+		CANcoderConfiguration armEncoderConfig = new CANcoderConfiguration();
+		armEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive; // TODO Change ::::::
+		armEncoderConfig.MagnetSensor.MagnetOffset = 0.4;
+		armEncoder.getConfigurator().apply(armEncoderConfig);
 
-		SmartDashboard.putNumber("Arm Setpoint Radians", setpoint);
+		TalonFXConfiguration armMotorConfig = new TalonFXConfiguration();
+		armMotorConfig.Feedback.FeedbackRemoteSensorID = armEncoder.getDeviceID();
+		armMotorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.SyncCANcoder;
+		armMotorConfig.Feedback.SensorToMechanismRatio = 1.0;
+		armMotorConfig.Feedback.RotorToSensorRatio = 10; // TODO CHANGE :::::
+		armMotor.getConfigurator().apply(armMotorConfig);
+
+		Slot0Configs armController = new Slot0Configs();
+		armController.kP = kP;
+		armController.kI = kI;
+		armController.kD = kD;
+		armController.kS = kS;
+		armController.kG = kG;
+		armController.kV = kV;
+		armController.kA = kA;
+		armMotor.getConfigurator().apply(armController);
+
 	}
 
 	@Override
 	public void periodic() {
-		SmartDashboard.putNumber("Arm Angle Degrees", getAngle() * (180/Math.PI));
-		SmartDashboard.putNumber("Arm Angle Radians", getAngle());
-		SmartDashboard.putNumber("Arm Angle Rotations", getAngle() / (2 * Math.PI) );
 
-		motor.setControl(new VoltageOut(volts));
 	}
 
 	/**
-	 *
-	 * @return the arm's angle in radians
-	 */
-	public double getAngle() {
-		return motor.getPosition().getValueAsDouble() * 2 * Math.PI / GEAR_RATIO;
-	}
-
-	public double getAngularVelocity() {
-		return motor.getVelocity().getValueAsDouble() * 2 * Math.PI / GEAR_RATIO;
-	}
-
-	public void run(double amps) {
-		motor.setControl(control.withOutput(Units.Amps.of(amps)));
-	}
-
-	/**
-	 * returns setpoitn in rad
+	 * Sets the position of the arm
+	 * @param position
 	 * @return
 	 */
-	public double getSetpoint () {
-		return setpoint;
+	public Command setArmPosition(Angle position) {
+		return new StartEndCommand(
+			() -> armMotor.setControl(new PositionTorqueCurrentFOC(position)),
+			() -> armMotor.setControl(new PositionTorqueCurrentFOC(armMotor.getPosition().getValue()))
+		);
 	}
 
-	public void setSetpoint (double setpoint) {
-		this.setpoint = setpoint;
+	/**
+	 * Spins the intake and ends the command once a current limit is reached
+	 * @param supplier
+	 * @return
+	 */
+	public Command spinIntake(Supplier<Voltage> supplier) {
+		return new FunctionalCommand(
+			() -> intakeMotor.setControl(new VoltageOut(supplier.get())),
+			() -> {},
+			(interrupted) -> intakeMotor.setControl(new VoltageOut(Volts.of(0))),
+			() -> {return intakeMotor.getSupplyCurrent().getValue().abs(Amps) > INTAKE_CURRENT_LIMIT.abs(Amps);},
+			this
+		);
 	}
+
+
 }

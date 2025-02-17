@@ -8,10 +8,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.*;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 import java.util.function.DoubleSupplier;
@@ -20,13 +18,13 @@ import static edu.wpi.first.units.Units.*;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.ElevatorConstants.*;
 
-public class ElevatorSysID extends SubsystemBase {
+public class Elevator extends SubsystemBase {
 	private final SysIdRoutine routine;
 	private final TalonFX motor;
 	private VoltageOut voltageControl;
 
-	public ElevatorSysID(int id) {
-		this.motor = new TalonFX(id);
+	public Elevator() {
+		this.motor = new TalonFX(MOTOR_PORT);
 
 		Slot0Configs motorConfig = new Slot0Configs();
 		motorConfig.kP = kP;

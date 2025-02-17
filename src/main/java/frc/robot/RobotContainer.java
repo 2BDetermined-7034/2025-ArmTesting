@@ -8,15 +8,13 @@ import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.OperatorConstants;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.ElevatorSysID;
+import frc.robot.subsystems.Elevator;
 
 import java.io.File;
-import java.util.function.DoubleSupplier;
 
 public class RobotContainer {
 	// Replace with CommandPS4Controller or CommandJoystick if needed
@@ -24,7 +22,7 @@ public class RobotContainer {
 //	private final CommandXboxController driverController = new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT);
 //	private final ArmSubsystem arm = new ArmSubsystem();
 //	private final ArmSysID armSysID = new ArmSysID(0);
-	private final ElevatorSysID elevatorSysID = new ElevatorSysID(0);
+	private final Elevator elevatorSysID = new Elevator();
 //	private final ElevatorSubsystem elevator = new ElevatorSubsystem();
 
 	public RobotContainer() {
@@ -37,7 +35,7 @@ public class RobotContainer {
 
 		TalonFX[] motors = new TalonFX[8];
 		for (int i = 0; i < 8; ++i) {
-			motors[i] = new TalonFX(i, Constants.Misc.canBus);
+			motors[i] = new TalonFX(i);
 			orchestra.addInstrument(motors[i], i & 1);
 		}
 
@@ -45,6 +43,10 @@ public class RobotContainer {
 
 		if (status.isOK()) {
 			orchestra.play();
+		}
+
+		for(int i = 0; i < 8; i++) {
+			motors[i].close();
 		}
 	}
 
