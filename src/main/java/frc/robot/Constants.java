@@ -26,7 +26,17 @@ public final class Constants {
 		public static final int INTAKE_MOTOR_ID = 13;
 		public static final int CANCODER_ID = 14;
 
-		public static final Current INTAKE_CURRENT_LIMIT = Amps.of(10);
+		public enum IntakeType {
+			INTAKE_ALGAE(Amps.of(5.0)),
+			INTAKE_CORAL(Amps.of(3.0));
+
+			public Current currentLimit;
+
+			IntakeType(Current currentLimit) {
+				this.currentLimit = currentLimit;
+			}
+
+		}
 
 		public static final double kP = 0;
 		public static final double kI = 0;

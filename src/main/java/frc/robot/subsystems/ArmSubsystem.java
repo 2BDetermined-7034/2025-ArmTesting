@@ -82,12 +82,12 @@ public class ArmSubsystem extends SubsystemBase {
 	 * @param supplier
 	 * @return
 	 */
-	public Command spinIntake(Supplier<Voltage> supplier) {
+	public Command spinIntake(Supplier<Voltage> supplier, IntakeType intakeType) {
 		return new FunctionalCommand(
 			() -> intakeMotor.setControl(new VoltageOut(supplier.get())),
 			() -> {},
 			(interrupted) -> intakeMotor.setControl(new VoltageOut(Volts.of(0))),
-			() -> {return intakeMotor.getSupplyCurrent().getValue().abs(Amps) > INTAKE_CURRENT_LIMIT.abs(Amps);},
+			() -> {return intakeMotor.getSupplyCurrent().getValue().abs(Amps) > intakeType.currentLimit.abs(Amps);},
 			this
 		);
 	}
