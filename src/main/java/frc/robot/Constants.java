@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.hardware.CANcoder;
 import edu.wpi.first.units.measure.Current;
 
 import static edu.wpi.first.units.Units.Amps;
@@ -40,7 +39,9 @@ public final class Constants {
 
 	}
 	public static class ElevatorConstants {
-		public static final int MOTOR_PORT = 0;
+		public static final int MASTER_MOTOR_ID = 1;
+		public static final int SLAVE_MOTOR_ID = 0;
+		public static final int CANCODER_ID = 2;
 
 		public static final double MASS = 2.4494; // kg
 		public static final double G_ACCELERATION = 9.8067; // ms^-2
@@ -49,6 +50,7 @@ public final class Constants {
 
 		public static final double GEAR_RATIO = 20.0 * (48.0 / 24.0);
 		public static final double SPOOL_RADIUS = 0.41275 / 80.8080462356;
+		public static final double MAX_CURRENT = 20.0;
 
 		public static final double kP = 40;
 		public static final double kI = 0.0;
