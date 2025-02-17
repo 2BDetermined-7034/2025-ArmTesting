@@ -88,8 +88,8 @@ public class Elevator extends SubsystemBase {
 
 	public Command setPosition(double position) {
 		return new StartEndCommand(
-			() -> motor.setControl(new PositionVoltage(position / (2.0 * Math.PI * SPOOL_RADIUS))),
-			() -> motor.setControl(new PositionVoltage(motor.getPosition().getValue())),
+			() -> masterMotor.setControl(new PositionTorqueCurrentFOC(position)),
+			() -> masterMotor.setControl(new PositionTorqueCurrentFOC(masterMotor.getPosition().getValue())),
 			this
 		);
 	}
@@ -98,10 +98,10 @@ public class Elevator extends SubsystemBase {
 		return new FunctionalCommand(
 			() -> {},
 			() -> {
-				motor.setVoltage(supplier.getAsDouble());
+				masterMotor.setVoltage(supplier.getAsDouble());
 			},
 			(interrupted) -> {
-				motor.setVoltage(0);
+				masterMotor.setVoltage(0);
 			},
 			() -> {
 				return false;
