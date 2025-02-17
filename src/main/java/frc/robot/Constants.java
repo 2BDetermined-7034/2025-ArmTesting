@@ -4,6 +4,15 @@
 
 package frc.robot;
 
+import edu.wpi.first.units.AngleUnit;
+import edu.wpi.first.units.VoltageUnit;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Per;
+import edu.wpi.first.units.measure.Voltage;
+
+import static edu.wpi.first.units.Units.*;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -52,8 +61,15 @@ public final class Constants {
 		public static final double AMPS_PER_NEWTON_METER = 476.10 / 9.36;
 
 		public static final double GEAR_RATIO = 20.0 * (48.0 / 24.0);
-		public static final double SPOOL_RADIUS = 0.46355 / (90.89096944956364 - 6.703956237296618);
+		public static final double SPOOL_RADIUS = 0.41275 / 80.8080462356;
 
-		public static final double MOTOR_HOME_POSITION = (-48d / 360d) * GEAR_RATIO; //rot
+		public static final double kP = 40;
+		public static final double kI = 0.0;
+		public static final double kD = 0.0; //0.70494
+
+		public static final double kS = 0.233;
+		public static final double kV = 4.9439;
+		public static final double kA = 0.095073;
+		public static final double kG = 0.031852;
 	}
 }

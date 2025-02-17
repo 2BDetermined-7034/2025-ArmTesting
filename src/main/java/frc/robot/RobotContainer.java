@@ -5,25 +5,18 @@
 package frc.robot;
 
 import com.ctre.phoenix6.Orchestra;
-import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.OperatorConstants;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.ArmCommand;
-import frc.robot.commands.ArmSysID;
-import frc.robot.commands.ElevatorSysID;
-import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ElevatorSysID;
 
 import java.io.File;
+import java.util.function.DoubleSupplier;
 
 public class RobotContainer {
 	// Replace with CommandPS4Controller or CommandJoystick if needed
@@ -31,14 +24,12 @@ public class RobotContainer {
 //	private final CommandXboxController driverController = new CommandXboxController(OperatorConstants.DRIVER_CONTROLLER_PORT);
 //	private final ArmSubsystem arm = new ArmSubsystem();
 //	private final ArmSysID armSysID = new ArmSysID(0);
-	private final ElevatorSysID elevatorSysID;
+	private final ElevatorSysID elevatorSysID = new ElevatorSysID(0);
+//	private final ElevatorSubsystem elevator = new ElevatorSubsystem();
 
 	public RobotContainer() {
-		elevatorSysID = new ElevatorSysID(0);
-
 		// Configure the trigger bindings
 		configureBindings();
-		playIntro();
 	}
 
 	private void playIntro() {
@@ -67,7 +58,10 @@ public class RobotContainer {
 		driverController.povUp().and(driverController.square()).whileTrue(elevatorSysID.sysIdDynamic(SysIdRoutine.Direction.kForward));
 		driverController.povDown().and(driverController.square()).whileTrue(elevatorSysID.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-		playIntro();
+		driverController.L1().whileTrue(elevatorSysID.setPosition(0.3));
+		driverController.R1().whileTrue(elevatorSysID.setPosition(0.0));
+		driverController.triangle().onTrue(elevatorSysID.zero());
+		driverController.R2().whileTrue(elevatorSysID.upAndDown(() -> driverController.getR2Axis()));
 	}
 
 	public Command getAutonomousCommand() {
